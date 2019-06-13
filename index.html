@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+          name="viewport">
+    <meta content="ie=edge" http-equiv="X-UA-Compatible">
+    <title>Google Maps example</title>
+    <link href="example.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <div class="maps" id="map"></div>
+</div>
+
+<script src="google-maps.js"></script>
+<script>
+    window.onload = function () {
+        let iconBase = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/';
+
+        initGoogleMaps(
+            'ENTER KEY HERE',
+            '#map',
+            {
+                center: {lat: 52.215645, lng: 5.963948},
+                zoom:   10,
+            },
+            [
+                {
+                    lat:            52.215645,
+                    lng:            5.963948,
+                    title:          'Apeldoorn centrum',
+                    icon:           iconBase + 'library_maps.png',
+                    map_icon_label: '<span class="map-icon map-icon-point-of-interest"></span>',
+                    optimized:      true,
+                },
+            ],
+        );
+    };
+
+</script>
+</body>
+</html>
