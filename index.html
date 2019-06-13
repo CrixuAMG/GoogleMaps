@@ -1,43 +1,37 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
-          name="viewport">
-    <meta content="ie=edge" http-equiv="X-UA-Compatible">
-    <title>Google Maps example</title>
-    <link href="example.css" rel="stylesheet">
+    <title>Simple Google Maps</title>
 </head>
 <body>
-<div class="container">
-    <div class="maps" id="map"></div>
-</div>
+    <h1>GoogleMaps</h1>
 
-<script src="google-maps.js"></script>
-<script>
-    window.onload = function () {
-        let iconBase = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/';
+    Put the following
+    <pre style="display: block;">
+        window.onload = function () {
+            let iconBase = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/';
 
-        initGoogleMaps(
-            'ENTER KEY HERE',
-            '#map',
-            {
-                center: {lat: 52.215645, lng: 5.963948},
-                zoom:   10,
-            },
-            [
+            initGoogleMaps(
+                'YOUR_API_KEY',
+                '#map', // The queryselector for the element you wish to put the map in
                 {
-                    lat:            52.215645,
-                    lng:            5.963948,
-                    title:          'Apeldoorn centrum',
-                    icon:           iconBase + 'library_maps.png',
-                    map_icon_label: '<span class="map-icon map-icon-point-of-interest"></span>',
-                    optimized:      true,
+                    // The center of the map
+                    center: {lat: 52.215645, lng: 5.963948},
+                    zoom:   10,
                 },
-            ],
-        );
-    };
-
-</script>
+                // The array of objects you wish to put on the map, any options supported by the Marker class is supported here
+                [
+                    {
+                        lat:            52.215645,
+                        lng:            5.963948,
+                        title:          'Apeldoorn centrum',
+                        icon:           iconBase + 'library_maps.png',
+                        optimized:      true,
+                    },
+                ],
+            );
+        };
+    </pre>
 </body>
 </html>
