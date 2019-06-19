@@ -2,19 +2,19 @@ var infowindow;
 
 /**
  * @param querySelector
- * @param mapsOptions
+ * @param mapOptions
  * @param objectsToDraw
  */
-async function createMap(querySelector, mapsOptions, objectsToDraw) {
+async function createMap(querySelector, mapOptions, objectsToDraw) {
     if (typeof google === 'undefined' || !google) {
         setTimeout(function () {
-            createMap(querySelector, mapsOptions, objectsToDraw);
+            createMap(querySelector, mapOptions, objectsToDraw);
         }, 250);
         return;
     }
 
-    if (!mapsOptions || !mapsOptions.center) {
-        mapsOptions = {
+    if (!mapOptions || !mapOptions.center) {
+        mapOptions = {
             center: {lat: 52.215645, lng: 5.963948},
             zoom:   10,
         };
@@ -26,24 +26,31 @@ async function createMap(querySelector, mapsOptions, objectsToDraw) {
         throw new MapsElementDoesNotExistError('Map element does not exist!');
     }
 
-    let map = await new google.maps.Map(mapElement, mapsOptions);
+    let map = await new google.maps.Map(mapElement, mapOptions);
 
     infowindow = new google.maps.InfoWindow();
 
-    await drawObjects(map, objectsToDraw);
+    await drawObjects(map, objectsToDraw, mapOptions);
 }
 
 /**
  * @param key
  * @param querySelector
- * @param mapsOptions
+ * @param mapOptions
  * @param objectsToDraw
  */
-async function initGoogleMaps(key, querySelector, mapsOptions, objectsToDraw) {
+async function initGoogleMaps(key, querySelector, mapOptions, objectsToDraw) {
     // Load in custom error class
     let script = document.createElement('script');
     script.src = 'MapsElementDoesNotExistError.js';
     document.body.appendChild(script);
+
+    if (!mapOptions.disable_clustering) {
+        // Load in MarkerClusterer
+        script     = document.createElement('script');
+        script.src = 'MarkerClusterer.js';
+        document.body.appendChild(script);
+    }
 
     // Load in google maps
     script     = document.createElement('script');
@@ -57,30 +64,24 @@ async function initGoogleMaps(key, querySelector, mapsOptions, objectsToDraw) {
     document.head.appendChild(link);
 
     // Create the map
-    await createMap(querySelector, mapsOptions, objectsToDraw);
+    await createMap(querySelector, mapOptions, objectsToDraw);
 }
 
 /**
  * @param map
  * @param objectsToDraw
+ * @param mapOptions
  * @returns {Promise<void>}
  */
-async function drawObjects(map, objectsToDraw) {
+async function drawObjects(map, objectsToDraw, mapOptions) {
     if (!Array.isArray(objectsToDraw)) {
         throw new Error('The objectsToDraw variable needs to be an array!');
     }
 
-    for (let i = 0; i < objectsToDraw.length; i++) {
-        drawObject(objectsToDraw[i], function (object) {
-            console.log(
-                {
-                    map:       map,
-                    position:  object,
-                    clickable: true,
-                    ...object,
-                },
-            );
+    let markers = [];
 
+    for (let i = 0; i < objectsToDraw.length; i++) {
+        await drawObject(objectsToDraw[i], function (object) {
             let marker = new google.maps.Marker(
                 {
                     map:       map,
@@ -100,6 +101,12 @@ async function drawObjects(map, objectsToDraw) {
             });
 
             marker.setMap(map);
+
+            markers.push(marker);
+
+            if (markers.length === objectsToDraw.length && !mapOptions.disable_clustering) {
+                new MarkerClusterer(map, markers, mapOptions.cluster_options || {});
+            }
         });
     }
 }
